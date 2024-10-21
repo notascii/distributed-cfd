@@ -11,19 +11,14 @@ RUN apt-get install -y build-essential python3 python3-pip libopenmpi-dev openmp
 RUN pip3 install --upgrade pip
 RUN pip3 install numpy scipy matplotlib mpi4py
 
-# Outils pour la communication distribuée (Kafka, RabbitMQ si nécessaire)
-RUN apt-get install -y curl gnupg
-RUN curl -fsSL https://packages.confluent.io/deb/7.3/archive.key | apt-key add -
-RUN add-apt-repository "deb https://packages.confluent.io/deb/7.3 stable main"
-RUN apt-get update && apt-get install -y confluent-platform
+
 
 # Ajouter les fichiers source de l'application à l'image Docker
 WORKDIR /app
 COPY ./src /app
 
-# Installation de Paraview (facultatif) pour la visualisation
-RUN apt-get install -y paraview
+
 
 # Commande par défaut pour lancer l'application avec MPI
-CMD ["mpirun", "-np", "4", "python3", "navier_stokes_solver.py"]
+CMD ["mpirun", "--allow-run-as-root", "-np", "4", "python3", "navier_stokes_solver.py"]
 
